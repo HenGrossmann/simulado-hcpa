@@ -61,9 +61,7 @@ button { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--pen); outline-offset: 2px; border-radius: 6px; }
 
 .faixa {
-  font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px;
-  border-top: 2px solid var(--ink); border-bottom: 1px solid var(--line); padding-block: 8px;
+  font-size: 0.92rem; color: var(--muted); margin-top: -4px;
 }
 .topo { display: flex; flex-direction: column; gap: 10px; }
 .contagem { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -790,8 +788,8 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
 
     view.innerHTML = `
       <header class="topo">
-        <div class="faixa"><span>Caderno de treino</span><span>Edital 04/2026</span><span>PS 32 · Assistente Administrativo II</span></div>
         <h1>Simulado HCPA</h1>
+        <p class="faixa">Edital 04/2026 · PS 32 · Assistente Administrativo II</p>
         <div class="contagem">${contagem}</div>
       </header>
       ${cartaoHoje()}
