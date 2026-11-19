@@ -97,7 +97,7 @@ button { font: inherit; color: inherit; }
 .barra i.e { background: var(--bad); }
 
 details.material { border: 1px solid var(--line); border-radius: var(--r); background: var(--card); padding: 12px 14px; }
-details.material summary { cursor: pointer; font-weight: 700; min-height: 32px; display: flex; align-items: center; }
+details.material summary { cursor: pointer; font-weight: 700; min-height: 44px; display: flex; align-items: center; }
 details.material ul { margin: 10px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
 details.material li a { display: inline-block; padding: 10px 0; }
 .nota { color: var(--muted); font-size: 0.88rem; }
@@ -160,7 +160,7 @@ details.texto p { margin-top: 10px; white-space: pre-line; font-size: 0.95rem; c
 .nb.prim { background: var(--pen-fill); color: var(--card); border-color: var(--pen-fill); }
 .nb.perigo { background: var(--bad); color: var(--card); border-color: var(--bad); }
 .nb:disabled { opacity: 0.45; cursor: default; }
-.sair { background: none; border: 0; color: var(--pen); cursor: pointer; padding: 6px 0; font-weight: 700; }
+.sair { background: none; border: 0; color: var(--pen); cursor: pointer; padding: 6px 0; font-weight: 700; min-height: 44px; }
 
 /* Resultado */
 .placar { display: flex; flex-direction: column; gap: 6px; }
@@ -220,7 +220,7 @@ details.texto p { margin-top: 10px; white-space: pre-line; font-size: 0.95rem; c
 .resumo-cab .porque { font-size: 1rem; }
 .ferramentas { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .modos { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--card); }
-.modo { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; cursor: pointer; font-weight: 700; color: var(--muted); }
+.modo { min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: none; cursor: pointer; font-weight: 700; color: var(--muted); }
 .modo[aria-pressed="true"] { background: var(--pen-soft); color: var(--pen); }
 .modo:disabled { opacity: 0.45; cursor: default; }
 .ouvir { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; font-weight: 700; }
@@ -232,27 +232,34 @@ details.texto p { margin-top: 10px; white-space: pre-line; font-size: 0.95rem; c
 .pontos li:first-child { border-top: 0; }
 .pontos .num { color: var(--pen); font-weight: 800; font-variant-numeric: tabular-nums; }
 .pontos .corpo { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.pontos .chave { color: var(--ink); font-weight: 800; background: linear-gradient(transparent 62%, var(--pen-soft) 62%); }
+.pontos .chave { color: var(--ink); font-weight: 800; background: linear-gradient(transparent 60%, color-mix(in srgb, var(--pen) 30%, transparent) 60%); }
 .pontos .ref { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
 .pontos li.falando { background: var(--pen-soft); }
 .pontos li.lembrou .num { color: var(--ok); }
 .pontos li.revisar .num { color: var(--bad); }
-.lacuna { display: inline-block; min-height: 32px; padding: 2px 12px; border-radius: 8px; border: 1px dashed var(--pen); background: var(--pen-soft); color: var(--pen); font: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; vertical-align: baseline; }
+.lacuna { display: inline-block; min-height: 44px; line-height: 40px; padding: 2px 12px; border-radius: 8px; border: 1px dashed var(--pen); background: var(--pen-soft); color: var(--pen); font: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; vertical-align: baseline; }
 .avaliar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .avaliar span { color: var(--muted); font-size: 0.92rem; }
-.avaliar .mini { flex: 0 1 auto; min-height: 40px; }
-.veredito-ponto { font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.avaliar { scroll-margin-bottom: 110px; }
+.avaliar .mini { flex: 0 1 auto; min-height: 44px; }
+.veredito-ponto { font-size: 0.85rem; font-weight: 700; color: var(--muted); background: none; border: 0; padding: 0; text-align: left; font-family: inherit; cursor: pointer; align-self: flex-start; min-height: 32px; }
+.pontos li.revisar { background: color-mix(in srgb, var(--bad) 8%, var(--card)); }
+.revisar-box { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: var(--r); background: var(--card); border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent); }
+.revisar-box .link-btn { font-size: 1rem; font-weight: 700; min-width: 28px; min-height: 32px; }
+.feito { scroll-margin-bottom: 110px; }
+.extras > summary { min-height: 44px; }
+.extras .videos { margin-top: 10px; }
 .lembrou .veredito-ponto { color: var(--ok); }
 .revisar .veredito-ponto { color: var(--bad); }
 .pega-ponto { font-size: 0.95rem; padding: 8px 10px; border-radius: 8px; background: var(--bad-soft); border: 1px solid color-mix(in srgb, var(--bad) 35%, transparent); }
-.pega-ponto b { color: var(--bad); }
+.pega-ponto b { color: color-mix(in srgb, var(--bad) 80%, var(--ink)); }
 .armadilhas { background: var(--card); border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent); border-radius: var(--r); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
 .armadilhas h3, .exemplo h3, .videos h3 { font-family: var(--f-display); font-size: 1.08rem; font-weight: 700; color: var(--ink); text-transform: none; letter-spacing: 0; }
 .armadilhas ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
 .exemplo { background: var(--card); border: 1px solid color-mix(in srgb, var(--pen) 40%, transparent); border-radius: var(--r); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
 .exemplo ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 4px; }
 .exemplo .resp { font-weight: 700; }
-.fim-leitura { font-weight: 700; padding: 14px 0 0; border-top: 1px solid var(--line); }
+.fim-leitura { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: var(--r); background: var(--card); border: 1px solid var(--line); }
 .links-res { display: flex; flex-direction: column; gap: 0; font-size: 0.92rem; overflow-wrap: anywhere; }
 .links-res a { display: flex; align-items: center; min-height: 44px; }
 .divisor { border: 0; border-top: 2px solid var(--ink); margin: 8px 0 0; }
@@ -520,36 +527,35 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     if (estado === 'oculto') return `${antes}<button class="lacuna" data-act="revelar" data-k="${esc(k)}">toque para ver</button>${depois}`;
     return `${antes}<b class="chave">${esc(chave)}</b>${depois}`;
   }
-  function blocoResumo(r) {
+  function blocoResumo(r, revisar) {
     const lei = leiDoResumo(r), pegs = pegadinhasDo(r), testar = R.modo === 'testar';
     const soltas = pegs.filter(g => g.ponto == null);
-    let html = '', grupoAtual = null, aberto = false;
+    const grupos = [];
     (r.pontos || []).forEach((p, i) => {
-      if (p.grupo !== grupoAtual || i === 0) {
-        if (aberto) html += '</ol>';
-        grupoAtual = p.grupo;
-        html += `${p.grupo ? `<h3 class="gtitulo">${esc(p.grupo)}</h3>` : ''}<ol class="pontos">`;
-        aberto = true;
-      }
+      if (!grupos.length || p.grupo !== grupos[grupos.length - 1].nome) grupos.push({ nome: p.grupo, itens: [] });
       const k = `${r.id}:${i}`, chave = chaveDo(p);
-      const st = testar ? (R.teste[k] || 'oculto') : 'ler';
+      const emTeste = testar && chave && (!R.so || R.so.includes(k));
+      const st = emTeste ? (R.teste[k] || 'oculto') : 'ler';
       const ref = refCurta(p.fonte, lei);
       const coladas = pegs.filter(g => g.ponto === i);
-      const mostraPega = !testar || st === 'sim' || st === 'nao';
-      html += `<li id="pt-${esc(r.id)}-${i}" class="${st === 'sim' ? 'lembrou' : st === 'nao' ? 'revisar' : ''}">
+      const mostraPega = !emTeste || st === 'sim' || st === 'nao';
+      const cls = st === 'sim' ? 'lembrou' : (st === 'nao' || (!testar && revisar.has(k))) ? 'revisar' : '';
+      grupos[grupos.length - 1].itens.push(`<li id="pt-${esc(r.id)}-${i}" class="${cls}">
         <span class="num">${i + 1}</span>
         <div class="corpo">
-          <p>${textoDoPonto(p, chave, testar && chave ? st : 'ler', k)}${ref ? ` <span class="ref">${esc(ref)}</span>` : ''}</p>
-          ${testar && chave && st === 'aberto' ? `<div class="avaliar"><span>Lembrou?</span><button class="mini" data-act="lembrei" data-k="${esc(k)}" data-v="sim">Lembrei</button><button class="mini" data-act="lembrei" data-k="${esc(k)}" data-v="nao">Não lembrei</button></div>` : ''}
-          ${testar && (st === 'sim' || st === 'nao') ? `<p class="veredito-ponto">${st === 'sim' ? 'Lembrou' : 'Para revisar'}</p>` : ''}
+          <p>${textoDoPonto(p, chave, emTeste ? st : 'ler', k)}${ref ? ` <span class="ref">${esc(ref)}</span>` : ''}</p>
+          ${emTeste && st === 'aberto' ? `<div class="avaliar"><span>Lembrou?</span><button class="mini" data-act="lembrei" data-k="${esc(k)}" data-v="sim">Lembrei</button><button class="mini" data-act="lembrei" data-k="${esc(k)}" data-v="nao">Não lembrei</button></div>` : ''}
+          ${emTeste && (st === 'sim' || st === 'nao') ? `<button class="veredito-ponto" data-act="desfazer" data-k="${esc(k)}">${st === 'sim' ? 'Lembrou' : 'Para revisar'} · <u>mudar</u></button>` : ''}
+          ${!testar && revisar.has(k) ? `<p class="veredito-ponto">Você não lembrou no último teste</p>` : ''}
           ${mostraPega ? coladas.map(g => `<p class="pega-ponto"><b>Pegadinha:</b> ${esc(g.t)}</p>`).join('') : ''}
         </div>
-      </li>`;
+      </li>`);
     });
-    if (aberto) html += '</ol>';
-    const exemplo = r.exemplo ? `<section class="exemplo" aria-labelledby="ex-${esc(r.id)}"><h3 id="ex-${esc(r.id)}">Exemplo resolvido</h3><p>${esc(r.exemplo.pergunta)}</p>
+    const exemplo = r.exemplo && !testar ? `<section class="exemplo" aria-labelledby="ex-${esc(r.id)}"><h3 id="ex-${esc(r.id)}">Exemplo resolvido</h3><p>${esc(r.exemplo.pergunta)}</p>
         <ol>${(r.exemplo.passos || []).map(t => `<li>${esc(t)}</li>`).join('')}</ol>
         <p class="resp">Resposta: ${esc(r.exemplo.resposta)}</p></section>` : '';
+    // O exemplo entra depois do primeiro grupo: as regras básicas vêm antes da conta resolvida.
+    const lista = grupos.map((g, gi) => `${g.nome ? `<h3 class="gtitulo">${esc(g.nome)}</h3>` : ''}<ol class="pontos">${g.itens.join('')}</ol>${gi === 0 ? exemplo : ''}`).join('');
     return `<section class="resumo">
       <header class="resumo-cab">
         <h2>${esc(r.titulo || r.tema)}</h2>
@@ -557,26 +563,37 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         ${r.porque ? `<p class="porque">${esc(r.porque)}</p>` : ''}
       </header>
       ${soltas.length && !testar ? `<section class="armadilhas"><h3>Armadilhas da banca</h3><ul>${soltas.map(g => `<li>${esc(g.t)}</li>`).join('')}</ul></section>` : ''}
-      ${exemplo && !testar ? exemplo : ''}
-      ${html}
-      ${(VID[r.id] || []).length && !testar ? `<section class="videos"><h3>Vídeos sobre o assunto</h3>${VID[r.id].map(v => v.arquivo ? `<figure class="video-proprio"><video controls playsinline preload="none" src="${esc(v.arquivo)}"></video>
-          <figcaption><b>${esc(v.titulo)}</b><small>Vídeo do site${v.minutos ? ` · ${v.minutos} min` : ''}</small></figcaption></figure>` : `<a class="video" href="${esc(v.url)}" target="_blank" rel="noopener">
-          <span class="video-tit">${ICONE.play}<b>${esc(v.titulo)}</b></span><small>${esc(v.canal)}${v.minutos ? ` · ${v.minutos} min` : ''}</small>${v.nota ? `<span>${esc(v.nota)}</span>` : ''}</a>`).join('')}
-        <p class="nota">Abre no YouTube. Dá para só ouvir, com a tela ligada.</p></section>` : ''}
-      ${reaisDo(r).length && !testar ? `<section class="reais"><h3>Questões reais da banca sobre isso</h3><ul>${reaisDo(r).map(x => `<li><button class="link-prova" data-act="folha" data-p="${x.pid}" data-so="${esc(x.tema)}"><b>${esc(PROVAS[x.pid].titulo)}</b><small>Questões ${faixas(x.nums)}</small></button></li>`).join('')}</ul></section>` : ''}
-      ${r.links && r.links.length && !testar ? `<div class="links-res"><span class="nota">Para ler na fonte:</span>${r.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.rotulo)}</a>`).join('')}</div>` : ''}
+      ${lista}
     </section>`;
+  }
+  function extrasDo(r) {
+    const vids = VID[r.id] || [], proprios = vids.filter(v => v.arquivo), yt = vids.filter(v => !v.arquivo), reais = reaisDo(r);
+    return `${proprios.map(v => `<figure class="video-proprio"><video controls playsinline preload="metadata" src="${esc(v.arquivo)}#t=0.5"></video>
+        <figcaption><b>${esc(v.titulo)}</b><small>Vídeo do site${v.minutos ? ` · ${v.minutos} min` : ''}</small></figcaption></figure>`).join('')}
+      ${yt.length ? `<details class="material extras"><summary>Vídeos no YouTube (${yt.length})</summary><div class="videos">${yt.map(v => `<a class="video" href="${esc(v.url)}" target="_blank" rel="noopener">
+          <span class="video-tit">${ICONE.play}<b>${esc(v.titulo)}</b></span><small>${esc(v.canal)}${v.minutos ? ` · ${v.minutos} min` : ''}</small>${v.nota ? `<span>${esc(v.nota)}</span>` : ''}</a>`).join('')}
+        <p class="nota">Abre no YouTube. Dá para só ouvir, com a tela ligada.</p></div></details>` : ''}
+      ${reais.length ? `<details class="material extras"><summary>Questões reais da banca sobre isso (${reais.length} ${reais.length === 1 ? 'prova' : 'provas'})</summary><ul class="lista-provas">${reais.map(x => `<li><button class="link-prova" data-act="folha" data-p="${x.pid}" data-so="${esc(x.tema)}"><b>${esc(PROVAS[x.pid].titulo)}</b><small>Questões ${faixas(x.nums)}</small></button></li>`).join('')}</ul></details>` : ''}
+      ${r.links && r.links.length ? `<details class="material extras"><summary>Ler na fonte oficial</summary><div class="links-res">${r.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.rotulo)}</a>`).join('')}</div></details>` : ''}`;
   }
   function reaisDo(r) {
     return (REAIS[r.tema] || []).map(x => ({ ...x, tema: r.tema }));
   }
   function chavesDoResumo(rids) {
-    return rids.flatMap(id => (RESID[id].pontos || []).map((p, i) => ({ k: `${id}:${i}`, ok: !!chaveDo(p) }))).filter(x => x.ok).map(x => x.k);
+    const ks = rids.flatMap(id => (RESID[id].pontos || []).map((p, i) => ({ k: `${id}:${i}`, ok: !!chaveDo(p) }))).filter(x => x.ok).map(x => x.k);
+    return R && R.so ? ks.filter(k => R.so.includes(k)) : ks;
   }
   function chaveTeste() { return R.ids.join('+'); }
+  function paraRevisar() {
+    const u = (store.testes || {})[chaveTeste()];
+    return new Set(u && u.pontos ? Object.keys(u.pontos).filter(k => u.pontos[k] === 'nao') : []);
+  }
   function resumo(rids, missao, manterRolagem) {
     S = null; F = null; confirmar = null;
-    if (!R || R.ids.join('+') !== rids.join('+')) R = { ids: rids, missao: missao || null, modo: 'ler', teste: {} };
+    if (!R || R.ids.join('+') !== rids.join('+')) {
+      const andamento = ((store.andamento || {})[rids.join('+')]) || {};
+      R = { ids: rids, missao: missao || null, modo: 'ler', teste: { ...andamento }, so: null };
+    }
     if (missao) R.missao = missao;
     const ids = rids.flatMap(idsDoResumo);
     const m = R.missao && PLANO.find(x => x.id === R.missao);
@@ -585,34 +602,53 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     const respondidas = ks.filter(k => R.teste[k] === 'sim' || R.teste[k] === 'nao');
     const lembrou = ks.filter(k => R.teste[k] === 'sim').length;
     const ultimo = (store.testes || {})[chaveTeste()];
+    const revisar = paraRevisar();
     const total = rids.reduce((s, id) => s + (RESID[id].pontos || []).length, 0);
+    const numDe = k => Number(k.split(':')[1]) + 1;
     const y = window.scrollY;
-    let fim = '';
-    if (testar && ks.length && respondidas.length === ks.length) {
-      fim = `<section class="feito" aria-live="polite"><h2>Você lembrou ${lembrou} de ${ks.length}</h2>
-        <p>${lembrou === ks.length ? 'Tudo certo. Agora as questões.' : 'Os pontos marcados para revisar ficam destacados em "Ler". Agora as questões.'}</p></section>`;
-    } else if (!testar) {
-      fim = `<p class="fim-leitura">Fim do resumo: ${total} pontos. ${ids.length ? `Agora as ${ids.length} questões, ou teste a memória antes em "Me testar".` : ''}</p>`;
+    const btnQuestoes = ids.length ? `<button class="mini prim" data-act="resumo-questoes">Fazer ${ids.length} questões</button>` : '';
+    let topo = '', fim = '';
+    if (testar) {
+      topo = `<p class="nota">${R.so ? `Só os ${ks.length} que você não lembrou da última vez. ` : ''}Tente lembrar a palavra escondida antes de tocar. Depois diga se lembrou.</p>`;
+      if (ks.length && respondidas.length === ks.length) {
+        const erradas = ks.filter(k => R.teste[k] === 'nao');
+        fim = `<section class="feito" aria-live="polite"><h2>Você lembrou ${lembrou} de ${ks.length}</h2>
+          <p>${erradas.length ? `Os ${erradas.length} que você não lembrou ficam marcados em vermelho quando você volta para "Ler".` : 'Tudo certo.'}</p>
+          <div class="botoes">${btnQuestoes}${erradas.length ? `<button class="mini" data-act="testar-erros">Testar de novo os ${erradas.length}</button>` : ''}</div></section>`;
+      }
+    } else {
+      topo = revisar.size
+        ? `<div class="revisar-box"><p><b>${revisar.size} ${revisar.size === 1 ? 'item' : 'itens'} para revisar</b> do último teste: ${[...revisar].map(k => `<button class="link-btn" data-act="ir" data-id="pt-${esc(k.replace(':', '-'))}">${numDe(k)}</button>`).join(', ')}</p><button class="mini" data-act="testar-erros">Testar só esses</button></div>`
+        : ultimo ? `<p class="nota">Último teste: lembrou ${ultimo.lembrou} de ${ultimo.total}.</p>`
+        : ks.length ? `<p class="nota">Dica: em "Me testar" a palavra-chave some e você tenta lembrar.</p>` : '';
+      fim = `<section class="fim-leitura"><p><b>Você leu os ${total} itens.</b> ${ids.length ? 'Agora teste a memória ou vá para as questões.' : ''}</p>
+        <div class="botoes">${ks.length ? `<button class="mini" data-act="modo" data-v="testar">Me testar</button>` : ''}${btnQuestoes}</div></section>`;
     }
     view.innerHTML = `
       <div class="barra-sup"><button class="sair" data-act="${R.missao ? 'plano' : 'inicio'}">← ${R.missao ? 'Plano' : 'Início'}</button>
-        <span class="pos">${testar ? `${respondidas.length} de ${ks.length} testados` : m ? 'Tarefa ' + (PLANO.indexOf(m) + 1) + ' de ' + PLANO.length : total + ' pontos'}</span></div>
+        <span class="pos">${testar ? `${respondidas.length} de ${ks.length} testados` : m ? 'Tarefa ' + (PLANO.indexOf(m) + 1) + ' de ' + PLANO.length : total + ' itens'}</span></div>
       <div class="ferramentas">
         <div class="modos" role="group" aria-label="Modo do resumo">
           <button class="modo" data-act="modo" data-v="ler" aria-pressed="${!testar}">Ler</button>
-          <button class="modo" data-act="modo" data-v="testar" aria-pressed="${testar}" ${ks.length ? '' : 'disabled'}>Me testar</button>
+          <button class="modo" data-act="modo" data-v="testar" aria-pressed="${testar}" ${chavesDoResumo(rids).length || R.so ? '' : 'disabled'}>Me testar</button>
         </div>
         ${'speechSynthesis' in window && !testar ? `<button class="ouvir" data-act="ouvir" aria-pressed="false">${ICONE.ouvir}<span>Ouvir</span></button>` : ''}
       </div>
-      ${testar ? `<p class="nota">Tente lembrar a palavra escondida antes de tocar. Depois diga se lembrou.</p>` : ultimo ? `<p class="nota">Último teste: lembrou ${ultimo.lembrou} de ${ultimo.total}.</p>` : ''}
-      ${rids.map(id => blocoResumo(RESID[id])).join('<hr class="divisor">')}
+      ${topo}
+      ${rids.map(id => blocoResumo(RESID[id], revisar)).join('<hr class="divisor">')}
       ${fim}
-      <p class="nota">Resumo escrito com ajuda de IA a partir das leis e documentos do edital, com o artigo de cada ponto para conferir. Na dúvida, vale o texto oficial.</p>`;
+      ${testar ? '' : rids.map(id => extrasDo(RESID[id])).join('')}
+      <p class="nota">Resumo escrito com ajuda de IA a partir das leis e documentos do edital, com o artigo de cada item para conferir. Na dúvida, vale o texto oficial.</p>`;
     nav.hidden = false;
     navIn.innerHTML = `<button class="nb" data-act="${R.missao ? 'plano' : 'inicio'}">${R.missao ? 'Plano' : 'Início'}</button>
       ${ids.length ? `<button class="nb prim" data-act="resumo-questoes">Fazer ${ids.length} questões</button>` : ''}`;
+    const foco = R.foco; R.foco = null;
     const destino = manterRolagem ? y : ((store.pos || {})[chaveTeste()] || 0);
-    requestAnimationFrame(() => window.scrollTo(0, destino));
+    requestAnimationFrame(() => {
+      window.scrollTo(0, destino);
+      const el = foco && view.querySelector(foco);
+      if (el) el.scrollIntoView({ block: 'center' });
+    });
   }
   function guardarPosicao() {
     if (!R || !view.querySelector('.resumo')) return;
@@ -620,13 +656,30 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     store.pos[chaveTeste()] = R.modo === 'ler' ? window.scrollY : 0;
     salvar();
   }
+  // O teste em andamento fica salvo, para ela poder sair no meio e voltar depois.
+  function salvarAndamento() {
+    store.andamento = store.andamento || {};
+    const so = {};
+    for (const [k, v] of Object.entries(R.teste)) if (v === 'sim' || v === 'nao') so[k] = v;
+    store.andamento[chaveTeste()] = so;
+    salvar();
+  }
   function marcarTeste(k, v) {
     R.teste[k] = v;
+    salvarAndamento();
     const ks = chavesDoResumo(R.ids);
     if (ks.every(x => R.teste[x] === 'sim' || R.teste[x] === 'nao')) {
       store.testes = store.testes || {};
-      store.testes[chaveTeste()] = { lembrou: ks.filter(x => R.teste[x] === 'sim').length, total: ks.length, em: new Date().toISOString().slice(0, 10) };
+      const ant = (store.testes[chaveTeste()] || {}).pontos || {};
+      const pontos = { ...ant };
+      ks.forEach(x => { pontos[x] = R.teste[x]; });
+      const todas = Object.values(pontos);
+      store.testes[chaveTeste()] = { lembrou: todas.filter(x => x === 'sim').length, total: todas.length, em: new Date().toISOString().slice(0, 10), pontos };
+      store.andamento[chaveTeste()] = {};
       salvar();
+      R.foco = '.feito';
+    } else {
+      R.foco = '.lacuna';
     }
     resumo(R.ids, null, true);
   }
@@ -815,22 +868,6 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
           <button class="mini" data-act="titulos">Calcular meus títulos</button>
         </div>
       </details>
-      <div class="stats" role="list">
-        <div role="listitem"><b>${PLANO.filter(m => feitas()[m.id]).length} de ${PLANO.length}</b><span>tarefas feitas</span></div>
-        <div role="listitem"><b>${resp.length}</b><span>questões respondidas</span></div>
-        <div role="listitem"><b>${Math.max(d, 0)}</b><span>${d === 1 ? 'dia até a prova' : 'dias até a prova'}</span></div>
-      </div>
-      <div class="acoes">
-        <button class="btn" data-act="simulado" ${temOficial ? '' : 'disabled'}>
-          <span>Simulado de 40 questões<small>5 Português · 5 Informática · 5 Raciocínio Lógico · 25 Específicos, como na prova. Correção no final.</small></span><span class="seta">→</span>
-        </button>
-        <button class="btn" data-act="rapida">
-          <span>Rodada rápida<small>10 questões sorteadas, com a correção na hora</small></span><span class="seta">→</span>
-        </button>
-        <button class="btn" data-act="erros" ${erros.length ? '' : 'disabled'}>
-          <span>Refazer as que errei<small>${erros.length ? erros.length + (erros.length === 1 ? ' questão' : ' questões') + ' com erro na última tentativa' : 'Nenhum erro guardado ainda'}</small></span><span class="seta">→</span>
-        </button>
-      </div>
       <section class="grupo" aria-labelledby="t-provas">
         <h2 id="t-provas">Provas reais da FAURGS</h2>
         <p class="nota">Questões de verdade da banca, de concursos anteriores do HCPA para o mesmo cargo. Você resolve no PDF e marca as respostas aqui. A página corrige pelo gabarito oficial.</p>
@@ -860,6 +897,20 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         <p class="nota">Os assuntos são os do conteúdo da prova escrita no edital. A barra mostra acertos (verde) e erros (vermelho) da última tentativa.</p>
       </section>
       ${grupos}
+      <section class="grupo" aria-labelledby="t-outras">
+        <h2 id="t-outras">Outras formas de treinar</h2>
+      </section>
+      <div class="acoes">
+        <button class="btn" data-act="simulado" ${temOficial ? '' : 'disabled'}>
+          <span>Simulado de 40 questões<small>5 Português · 5 Informática · 5 Raciocínio Lógico · 25 Específicos, como na prova. Correção no final.</small></span><span class="seta">→</span>
+        </button>
+        <button class="btn" data-act="rapida">
+          <span>Rodada rápida<small>10 questões sorteadas, com a correção na hora</small></span><span class="seta">→</span>
+        </button>
+        <button class="btn" data-act="erros" ${erros.length ? '' : 'disabled'}>
+          <span>Refazer as que errei<small>${erros.length ? erros.length + (erros.length === 1 ? ' questão' : ' questões') + ' com erro na última tentativa' : 'Nenhum erro guardado ainda'}</small></span><span class="seta">→</span>
+        </button>
+      </div>
       <details class="material">
         <summary>Material oficial para estudar</summary>
         <ul>
@@ -1134,7 +1185,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     const act = el.dataset.act;
     const rolar = () => window.scrollTo(0, 0);
     if (act !== 'ouvir') pararFala();
-    if (!['ouvir', 'revelar', 'lembrei', 'modo'].includes(act)) guardarPosicao();
+    if (!['ouvir', 'revelar', 'lembrei', 'modo', 'desfazer', 'ir', 'testar-erros'].includes(act)) guardarPosicao();
     switch (act) {
       case 'simulado': iniciar('simulado', 'Simulado de 40', montarSimulado()); rolar(); break;
       case 'rapida': iniciar('pratica', 'Rodada rápida', embaralhar(Q.map(q => q.id)).slice(0, 10)); rolar(); break;
@@ -1201,8 +1252,11 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         break;
       }
       case 'resumo': R = null; resumo([el.dataset.r]); break;
-      case 'modo': guardarPosicao(); R.modo = el.dataset.v; resumo(R.ids, null, R.modo === 'ler'); if (R.modo === 'testar') rolar(); break;
-      case 'revelar': R.teste[el.dataset.k] = 'aberto'; resumo(R.ids, null, true); break;
+      case 'modo': guardarPosicao(); R.modo = el.dataset.v; R.so = null; if (R.modo === 'testar') { R.teste = { ...((store.andamento || {})[chaveTeste()] || {}) }; } resumo(R.ids, null, R.modo === 'ler'); if (R.modo === 'testar') rolar(); break;
+      case 'testar-erros': { const rv = [...paraRevisar()]; R.modo = 'testar'; R.so = rv.length ? rv : (Object.keys(R.teste).filter(k => R.teste[k] === 'nao')); R.so.forEach(k => { delete R.teste[k]; }); resumo(R.ids, null, false); rolar(); break; }
+      case 'desfazer': R.teste[el.dataset.k] = 'aberto'; salvarAndamento(); resumo(R.ids, null, true); break;
+      case 'ir': { const alvo = document.getElementById(el.dataset.id); if (alvo) alvo.scrollIntoView({ block: 'center' }); break; }
+      case 'revelar': R.teste[el.dataset.k] = 'aberto'; R.foco = '.avaliar'; resumo(R.ids, null, true); break;
       case 'lembrei': marcarTeste(el.dataset.k, el.dataset.v); break;
       case 'resumo-questoes': {
         const ids = R.ids.flatMap(idsDoResumo), missao = R.missao;
