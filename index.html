@@ -253,8 +253,8 @@ details.texto p { margin-top: 10px; white-space: pre-line; font-size: 0.95rem; c
 .veredito-ponto { font-size: 0.85rem; font-weight: 700; color: var(--muted); background: none; border: 0; padding: 0; text-align: left; font-family: inherit; cursor: pointer; align-self: flex-start; min-height: 44px; }
 .pontos li.revisar { background: color-mix(in srgb, var(--bad) 12%, var(--card)); }
 .pontos li.revisar .num { display: grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 50%; background: var(--bad); color: var(--card); }
-.passo-feito { color: var(--muted); text-decoration: line-through; }
-.passo-feito::after { content: ' ✓'; color: var(--ok); text-decoration: none; }
+/* O site só sabe que ela rolou até o fim do resumo, não que leu: o passo ganha um aviso, sem riscar. */
+.passo-visto::after { content: ' · chegou ao fim ✓'; color: var(--ok); font-size: 0.85em; font-weight: 700; }
 .revisao-curta { display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 10px 14px; min-height: 52px; border-radius: var(--r); border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent); background: color-mix(in srgb, var(--bad) 8%, var(--card)); color: var(--ink); cursor: pointer; font: inherit; }
 .revisao-curta small { color: var(--muted); font-size: 0.85rem; }
 .tema .estudo { display: block; font-size: 0.82rem; color: var(--pen); font-weight: 700; }
@@ -473,7 +473,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     const partes = [];
     if (e.andamento) partes.push('teste pela metade');
     else if (e.teste) partes.push(`lembrou ${e.teste.lembrou} de ${e.teste.total}`);
-    else if (e.lido) partes.push('lido');
+    else if (e.lido) partes.push('chegou ao fim do resumo');
     if (e.revisar) partes.push(`${e.revisar} para revisar`);
     return partes.join(' · ');
   }
@@ -489,7 +489,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
       <h2 id="t-hoje">${m.ess ? '<span class="estrela" aria-label="essencial">★</span> ' : ''}${esc(m.titulo)}</h2>
       <p class="meta">Tarefa de hoje · cerca de ${m.min} min</p>
       ${m.det ? `<p>${esc(m.det)}</p>` : ''}
-      <ol>${passosDa(m).map((t, i) => `<li${i === 0 && m.res && m.res.length && estudoDe(m.res.join('+')).lido ? ' class="passo-feito"' : ''}>${esc(t)}</li>`).join('')}</ol>
+      <ol>${passosDa(m).map((t, i) => `<li${i === 0 && m.res && m.res.length && estudoDe(m.res.join('+')).lido ? ' class="passo-visto"' : ''}>${esc(t)}</li>`).join('')}</ol>
       <div class="botoes">
         <button class="mini prim" data-act="missao" data-m="${m.id}">Começar</button>
         <button class="mini" data-act="plano">Ver o plano</button>
@@ -1042,7 +1042,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         <p class="veredito">${ver}</p>
         ${q.explicacao ? `<p>${esc(q.explicacao)}</p>` : ''}
         ${q.fundamento ? `<blockquote>${esc(q.fundamento)}</blockquote>` : ''}
-        ${q.fonte ? `<p class="fonte">Fonte: ${esc(q.fonte)}${q.url ? ` · <a href="${esc(q.url)}" target="_blank" rel="noopener">abrir</a>` : ''}</p>` : ''}
+        ${q.fonte && q.fonte !== 'Resolução' ? `<p class="fonte">Fonte: ${esc(q.fonte)}${q.url ? ` · <a href="${esc(q.url)}" target="_blank" rel="noopener">abrir</a>` : ''}</p>` : ''}
       </section>`;
     }
 
