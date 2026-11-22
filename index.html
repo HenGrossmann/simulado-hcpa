@@ -887,6 +887,41 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
   }
   function treinoFormulas(n) { return Array.from({ length: n }, (_, i) => i % 2 ? gerarFormulaConta() : gerarFormulaCopia()).filter(Boolean); }
 
+  // Lembretes de gramática para quando a questão da banca usa o termo e ela não lembra o que é.
+  const GLOSSARIO = [
+    [/objeto direto/i, 'objeto direto', 'Completa o verbo sem preposição. Pergunte “o quê?” ou “quem?” ao verbo. Ex.: “Ela leu o livro”: leu o quê? o livro.'],
+    [/objeto indireto/i, 'objeto indireto', 'Completa o verbo com preposição (a, de, em, com...). Ex.: “Ela gosta de café”: gosta de quê? de café.'],
+    [/predicativo/i, 'predicativo', 'Uma característica do sujeito ligada por verbo como ser, estar, parecer, ficar. Ex.: “Ela está cansada”: cansada é o predicativo.'],
+    [/adjunto adverbial/i, 'adjunto adverbial', 'Diz quando, onde, como ou por quê algo acontece. Ex.: “ontem”, “em casa”, “com calma”.'],
+    [/\bsujeito\b/i, 'sujeito', 'Quem faz ou sofre a ação, e o verbo concorda com ele. Pergunte “quem?” ou “o quê?” antes do verbo. Ex.: “Os pacientes chegaram”: quem chegou? os pacientes.'],
+    [/crase|acento grave/i, 'crase', 'É “a” + “a”. Teste: troque a palavra feminina por uma masculina. Se virar “ao”, tem crase. Ex.: “fui à farmácia” vira “fui ao mercado”.'],
+    [/pronome relativo|\bcujo\b|\bcuja\b/i, 'pronome relativo', '“Que”, “o qual”, “onde”, “cujo” retomam uma palavra que veio antes. “Onde” só serve para lugar. “Cujo” indica posse: “o paciente cujo exame saiu”.'],
+    [/concordância|concorda/i, 'concordância', 'O verbo combina com o sujeito: sujeito no plural, verbo no plural. Atenção: “haver” no sentido de existir fica no singular: “havia muitas pessoas”.'],
+    [/voz passiva|passiva/i, 'voz passiva', 'Quem sofre a ação vira o sujeito: “O exame foi feito”. Com “se”, o verbo concorda com a coisa: “Vendem-se casas”.'],
+    [/regência|rege\b/i, 'regência', 'Qual preposição o verbo pede. Ex.: “assistir a” (ver), “obedecer a”, “preferir uma coisa a outra” (e não “do que”).'],
+    [/próclise|ênclise|mesóclise|colocação pronominal|colocação do pronome/i, 'colocação do pronome', 'Palavras como “não”, “nunca”, “que”, “quem” puxam o pronome para antes do verbo: “Não me disse”. Sem elas, no começo da frase, o pronome vem depois: “Disse-me”.'],
+    [/conjunção|conectivo|conector|nexo|locução conjuntiva/i, 'conectivos', 'Mas, porém, contudo: oposição. Porque, pois, já que: causa ou explicação. Portanto, logo: conclusão. Embora, ainda que: concessão. Se, caso: condição. Para que: finalidade.'],
+    [/sinônimo|substituíd|substituir|sem alteração do sentido|sem prejuízo/i, 'troca de palavras', 'Troque a palavra no próprio texto e leia a frase inteira. Se o sentido e a gramática continuam iguais, a troca serve.'],
+  ];
+  function lembretesDe(q) {
+    if (!q.banca || q.materia !== 'Português') return [];
+    const alvo = [q.enunciado, ...(q.itens || []), ...q.alternativas].join(' ');
+    return GLOSSARIO.filter(([re]) => re.test(alvo)).slice(0, 2);
+  }
+  function bancaEscolha(pid) {
+    VISTA = 'banca-escolha'; armar();
+    S = null; F = null; R = null; confirmar = null;
+    const p = PROVAS[pid], ids = idsBanca(pid);
+    const partes = [...new Set(ids.map(id => BYID[id].tema))].map(t => ({ t, n: ids.filter(id => BYID[id].tema === t).length, feitas: ids.filter(id => BYID[id].tema === t && store.res[id]).length }));
+    view.innerHTML = `
+      <div class="barra-sup"><button class="sair" data-act="inicio">← Início</button><span class="pos">${ids.length} questões</span></div>
+      <section class="grupo"><h2>${esc(p.titulo)}</h2><p class="nota">${esc(p.sub || '')}</p>
+        <p>Esta prova é antiga e tem outra divisão: ${partes.map(x => `${x.n} de ${esc(x.t)}`).join(', ')}. A sua prova terá 40 questões: 5 de Português, 5 de Informática, 5 de Raciocínio Lógico e 25 de Conhecimentos Específicos.</p>
+        <p class="nota">Escolha uma parte para não cansar. Cada resposta fica salva neste aparelho.</p></section>
+      <div class="acoes">${partes.map(x => `<button class="btn" data-act="banca" data-p="${pid}" data-so="${esc(x.t)}"><span>Só ${esc(x.t)}<small>${x.n} ${x.n === 1 ? 'questão' : 'questões'}${x.feitas ? ` · ${x.feitas} já respondidas` : ''}</small></span><span class="seta">→</span></button>`).join('')}
+        <button class="btn" data-act="banca" data-p="${pid}"><span>A prova inteira<small>${ids.length} questões, na ordem da prova</small></span><span class="seta">→</span></button></div>`;
+    nav.hidden = true;
+  }
   function idsBanca(pid, so) { return TODAS.filter(q => q.banca === pid && (!so || q.tema === so)).sort((a, b) => a.num - b.num).map(q => q.id); }
   function temBanca(pid) { return TODAS.some(q => q.banca === pid); }
   function entraNaSessao(qs) { qs.forEach(q => { BYID[q.id] = q; }); return qs.map(q => q.id); }
@@ -1406,7 +1441,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
           <p class="nota">${esc(p.nota)}</p>
           ${ult}
           <div class="botoes">
-            ${temBanca(pid) ? `<button class="mini" data-act="banca" data-p="${pid}">Resolver aqui no site</button>` : ''}
+            ${temBanca(pid) ? `<button class="mini" data-act="banca-escolha" data-p="${pid}">Resolver aqui no site</button>` : ''}
             <a class="mini" href="${esc(p.url)}" target="_blank" rel="noopener">Abrir a prova (PDF)</a>
             <button class="mini" data-act="folha" data-p="${pid}">Marcar respostas no PDF</button>
           </div>
@@ -1415,7 +1450,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
       ${Object.values(PROVAS).some(p => p.extra) ? `<details class="material mais-provas"><summary>Mais provas da banca para o HCPA (${Object.values(PROVAS).filter(p => p.extra).length})</summary>
         <p class="nota">Provas de outros cargos do HCPA, feitas pela FAURGS. Entram só as questões que caem na sua prova.</p>
         <ul class="lista-provas">${Object.entries(PROVAS).filter(([, p]) => p.extra).map(([pid, p]) => {
-          if (temBanca(pid)) return `<li><button class="link-prova" data-act="banca" data-p="${pid}"><b>${esc(p.titulo)}</b><small>${idsBanca(pid).length} questões úteis · resolver aqui no site</small></button></li>`;
+          if (temBanca(pid)) return `<li><button class="link-prova" data-act="banca-escolha" data-p="${pid}"><b>${esc(p.titulo)}</b><small>${idsBanca(pid).length} questões úteis · resolver aqui no site</small></button></li>`;
           const f = (store.folhas || {})[pid], c = f && f.corrigida ? contarFolha(pid, f.marcas) : null;
           return `<li><button class="link-prova" data-act="folha" data-p="${pid}"><b>${esc(p.titulo)}</b><small>${numsDe(pid).length} questões úteis${c ? ` · última correção: ${c.acertos} de ${c.total}` : ''}</small></button></li>`;
         }).join('')}</ul></details>` : ''}
@@ -1565,6 +1600,8 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         })()}
         ${q.figura ? `<img class="figura-q" src="${esc(q.figura)}" alt="Figura da questão ${q.num}, como está na prova">` : ''}
         ${q.dica && !revelado && S.modo !== 'simulado' ? `<details class="dica-q"><summary>Não sei por onde começar</summary><p>${esc(q.dica)}</p></details>` : ''}
+        ${!revelado && S.modo !== 'simulado' ? lembretesDe(q).map(([, nome, txt]) => `<details class="dica-q"><summary>Não lembro o que é ${esc(nome)}</summary><p>${esc(txt)}</p></details>`).join('') : ''}
+        ${q.banca && q.textoRef && !revelado && S.modo !== 'simulado' ? `<details class="dica-q"><summary>O texto é longo demais</summary><p>Leia primeiro a pergunta e as alternativas. Depois volte ao texto só nas linhas que elas citam. Não precisa ler tudo de novo a cada questão do mesmo texto.</p></details>` : ''}
         <div class="opcoes">${opcoes}</div>
         ${fb}
       </article>`;
@@ -1643,6 +1680,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         ${notaTxt}
       </section>
       ${edital}
+      ${S.modo !== 'simulado' && ids.some(id => S.resp[id] == null) ? `<div class="revisar-box"><p><b>Você pulou ${ids.filter(id => S.resp[id] == null).length} ${ids.filter(id => S.resp[id] == null).length === 1 ? 'questão' : 'questões'}.</b> Quer tentar agora, com calma?</p><button class="mini prim" data-act="puladas">Fazer as que pulei</button></div>` : ''}
       <table class="tabela">
         <thead><tr><th>Matéria</th><th class="n">Acertos</th></tr></thead>
         <tbody>${porMat.map(x => `<tr><td>${esc(x.m)}</td><td class="n">${x.ok} / ${x.total}</td></tr>`).join('')}</tbody>
@@ -1861,6 +1899,8 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
       case 'refazer': iniciar('pratica', 'Refazer erradas', S.ids.filter(id => S.resp[id] !== BYID[id].correta)); rolar(); break;
       case 'inicio': inicio(); rolar(); break;
       case 'anotacoes': anotacoes(); rolar(); break;
+      case 'puladas': { const ids = S.ids.filter(id => S.resp[id] == null), t = S.titulo; iniciar('pratica', t + ' · as que pulei', ids); rolar(); break; }
+      case 'banca-escolha': bancaEscolha(el.dataset.p); rolar(); break;
       case 'banca': { const pid = el.dataset.p, so = el.dataset.so || null, ids = idsBanca(pid, so); if (ids.length) { iniciar('pratica', PROVAS[pid].titulo + (so ? ' · ' + so : ''), ids); rolar(); } break; }
       case 'refazer-uma': iniciar('pratica', 'Refazer uma questão', [el.dataset.id]); rolar(); break;
       case 'retomar': { const g = sessaoGuardada(); if (g) { S = g; R = null; F = null; questao(); rolar(); } else inicio(); break; }
