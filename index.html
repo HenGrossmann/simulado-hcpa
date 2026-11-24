@@ -1427,7 +1427,9 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
           ? linhaTema(t.tema, t.ids, `data-act="resumo" data-r="${esc(RES_DO_TEMA[t.tema])}"`, RES_DO_TEMA[t.tema])
           : linhaTema(t.tema, t.ids, `data-act="tema" data-tema="${esc(t.materia + '|' + t.tema)}"`)).join('');
       }
-      grupos += `<div class="grupo" id="mat-${MATERIAS.indexOf(mat)}"><h3>${esc(mat)}</h3><div class="temas">${linhas}</div></div>`;
+      grupos += `<div class="grupo" id="mat-${MATERIAS.indexOf(mat)}"><h3>${esc(mat)}</h3>
+        <button class="btn misturar" data-act="misturar" data-m="${esc(mat)}"><span>10 misturadas de ${esc(mat)}<small>De todos os assuntos, do treino e das provas reais, com correção na hora</small></span><span class="seta">→</span></button>
+        <div class="temas">${linhas}</div></div>`;
     }
 
     view.innerHTML = `
@@ -1837,6 +1839,12 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
       case 'retomar-simulado': abrirSimulado(); rolar(); break;
       case 'descartar-simulado': esquecerSimulado(); { const g = sessaoGuardada(); if (g && g.modo === 'simulado') esquecerSessao(); } inicio(); break;
       case 'rapida': iniciar('pratica', 'Rodada rápida', embaralhar(Q.map(q => q.id)).slice(0, 10)); rolar(); break;
+      case 'misturar': {
+        // Só entram as reais que têm explicação: sem ela, errar não ensina nada.
+        const m = el.dataset.m, ids = TODAS.filter(q => q.materia === m && !q.gemeaDe && (!q.banca || q.passos)).map(q => q.id);
+        if (ids.length) { iniciar('pratica', m + ' · misturadas', embaralhar(ids).slice(0, 10)); rolar(); }
+        break;
+      }
       case 'erros': iniciar('pratica', 'Refazer erros', paraRefazer()); rolar(); break;
       case 'tema': {
         const t = temas().find(t => t.materia + '|' + t.tema === el.dataset.tema);
