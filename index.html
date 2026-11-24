@@ -433,7 +433,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     { id: 'm16', res: ['injuria', 'ans', 'cnv'] },
     { id: 'm17b', res: ['nr32', 'sus'], det: 'Revisão rápida do que você já conhece.' },
     { id: 'm17c', res: ['lgpd', 'etica'], modo: 'testar', ess: true, titulo: 'Revisão: LGPD e ética no Me testar', det: 'Os dois assuntos que você menos conhecia, agora tentando lembrar sem ler.' },
-    { id: 'm18', acao: 'simulado', titulo: 'Simulado de 40 questões', det: 'Como no dia da prova: 40 questões, correção no final.', min: 90, ess: true },
+    { id: 'm18', acao: 'simulado', titulo: 'Simulado de 40 questões', det: 'Como no dia da prova: 40 questões, sem dicas, correção no final.', min: 90, ess: true },
     { id: 'm19', acao: 'erros', titulo: 'Refazer as que errei', det: 'Só as questões que ficaram erradas.', min: 30, ess: true }
   ].map(m => {
     const rs = (m.res || []).filter(id => RESID[id]);
@@ -535,7 +535,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     const m = PLANO.find(x => x.id === mid);
     if (!m) return;
     if (m.prova) { F = { pid: m.prova, missao: m.id }; S = null; confirmar = null; folha(); return; }
-    if (m.acao === 'simulado') { iniciar('simulado', 'Simulado de 40', montarSimulado()); S.missao = m.id; questao(); return; }
+    if (m.acao === 'simulado') { abrirSimulado(m.id); return; }
     if (m.acao === 'erros') {
       const ids = paraRefazer();
       if (!ids.length) { marcarFeita(m.id); plano(); return; }
@@ -1271,16 +1271,29 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     if (VISTA !== 'inicio') history.pushState({ hcpa: 1 }, '');
   });
   const KEY_SESSAO = 'hcpa-sessao';
+  // O simulado tem um lugar só dele: sair para treinar com dica não pode apagar um simulado pela metade.
+  const KEY_SIM = 'hcpa-simulado';
   function guardarSessao() {
     try {
+      if (S && S.modo === 'simulado') {
+        if (S.entregue) localStorage.removeItem(KEY_SIM);
+        else localStorage.setItem(KEY_SIM, JSON.stringify({ S, em: Date.now() }));
+      }
       if (!S || S.modo === 'pratica-fim' || (S.modo === 'simulado' && S.entregue)) { localStorage.removeItem(KEY_SESSAO); return; }
       localStorage.setItem(KEY_SESSAO, JSON.stringify({ S, em: Date.now() }));
     } catch (e) {}
   }
-  function sessaoGuardada() {
+  function simuladoGuardado() {
+    const g = sessaoGuardada(KEY_SIM, 30);
+    if (g) return g;
+    // Simulado começado antes de existir o lugar próprio dele.
+    const s = sessaoGuardada();
+    return s && s.modo === 'simulado' && !s.entregue ? s : null;
+  }
+  function sessaoGuardada(chave = KEY_SESSAO, dias = 3) {
     try {
-      const g = JSON.parse(localStorage.getItem(KEY_SESSAO) || 'null');
-      if (!g || !g.S || Date.now() - g.em > 3 * 864e5) return null;
+      const g = JSON.parse(localStorage.getItem(chave) || 'null');
+      if (!g || !g.S || Date.now() - g.em > dias * 864e5) return null;
       const ids = g.S.ids.filter(id => BYID[id]);
       if (!ids.length) return null;
       const atual = g.S.ids[g.S.i];
@@ -1290,6 +1303,14 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     } catch (e) { return null; }
   }
   function esquecerSessao() { try { localStorage.removeItem(KEY_SESSAO); } catch (e) {} }
+  function esquecerSimulado() { try { localStorage.removeItem(KEY_SIM); } catch (e) {} }
+  // Começar um simulado novo quando já há um pela metade continua o que estava parado.
+  function abrirSimulado(missao) {
+    const g = simuladoGuardado();
+    if (g) { S = g; R = null; F = null; if (missao) S.missao = missao; questao(); return; }
+    iniciar('simulado', 'Simulado de 40', montarSimulado());
+    if (missao) { S.missao = missao; guardarSessao(); }
+  }
 
   // ---------- Cópia do progresso ----------
   function baixarProgresso() {
@@ -1400,10 +1421,12 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         <div class="contagem">${contagem}</div>
       </header>
       ${(() => {
-        const g = sessaoGuardada();
-        if (!g) return '';
-        return `<div class="revisar-box retomar"><p><b>Você parou no meio: ${esc(g.titulo)}, questão ${g.i + 1} de ${g.ids.length}.</b></p>
-          <div class="botoes"><button class="mini prim" data-act="retomar">Continuar de onde parei</button><button class="link-btn" data-act="descartar-sessao">Descartar</button></div></div>`;
+        const g = sessaoGuardada(), sim = simuladoGuardado();
+        let h = g ? `<div class="revisar-box retomar"><p><b>Você parou no meio: ${esc(g.titulo)}, questão ${g.i + 1} de ${g.ids.length}.</b></p>
+          <div class="botoes"><button class="mini prim" data-act="retomar">Continuar de onde parei</button><button class="link-btn" data-act="descartar-sessao">Descartar</button></div></div>` : '';
+        if (sim && !(g && g.modo === 'simulado')) h += `<div class="revisar-box retomar"><p><b>Seu simulado está guardado na questão ${sim.i + 1} de ${sim.ids.length}.</b></p>
+          <div class="botoes"><button class="mini${g ? '' : ' prim'}" data-act="retomar-simulado">Continuar o simulado</button><button class="link-btn" data-act="descartar-simulado">Descartar</button></div></div>`;
+        return h;
       })()}
       ${cartaoHoje()}
       <details class="material pesos">
@@ -1465,7 +1488,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
       </section>
       <div class="acoes">
         <button class="btn" data-act="simulado" ${temOficial ? '' : 'disabled'}>
-          <span>Simulado de 40 questões<small>5 Português · 5 Informática · 5 Raciocínio Lógico · 25 Específicos, como na prova. Correção no final.</small></span><span class="seta">→</span>
+          <span>Simulado de 40 questões<small>5 Português · 5 Informática · 5 Raciocínio Lógico · 25 Específicos, como na prova. Sem dicas, correção no final.</small></span><span class="seta">→</span>
         </button>
         <button class="btn" data-act="treino-formulas">
           <span>Treino de fórmulas de planilha<small>10 questões novas a cada vez: copiar fórmula com $ e ordem das contas</small></span><span class="seta">→</span>
@@ -1586,6 +1609,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         <span class="pos">${S.i + 1} / ${S.ids.length}</span>
       </div>
       <div class="progresso" aria-hidden="true"><i style="width:${pct}%"></i></div>
+      ${simuladoAberto ? `<p class="aviso">Modo prova: sem dicas, como no dia. As explicações aparecem quando você entregar. Para treinar com dica, saia e escolha a matéria na tela inicial. Este simulado fica guardado.</p>` : ''}
       <article class="questao">
         <div class="linha-acoes"><span class="num">Questão ${S.i + 1}</span><span class="chip">${esc(q.materia === q.tema ? q.materia : q.tema)}</span><span class="origem">${q.banca ? `Questão real da FAURGS · ${esc(PROVAS[q.banca].titulo)}, nº ${q.num}` : 'Treino · escrita para o simulado, não é da banca'}</span></div>
         ${q.instrucao ? `<p class="instrucao">${esc(q.instrucao)}</p>` : ''}
@@ -1628,6 +1652,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
 
   function entregar() {
     S.entregue = true;
+    esquecerSimulado();
     marcarFeita(S.missao);
     for (const id of S.ids) if (S.resp[id] != null) registrar(id, S.resp[id] === BYID[id].correta);
     resultado();
@@ -1792,7 +1817,9 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     if (act !== 'ouvir') pararFala();
     if (!['ouvir', 'revelar', 'lembrei', 'modo', 'desfazer', 'ir', 'testar-erros', 'continuar-teste'].includes(act)) guardarPosicao();
     switch (act) {
-      case 'simulado': iniciar('simulado', 'Simulado de 40', montarSimulado()); rolar(); break;
+      case 'simulado': abrirSimulado(); rolar(); break;
+      case 'retomar-simulado': abrirSimulado(); rolar(); break;
+      case 'descartar-simulado': esquecerSimulado(); { const g = sessaoGuardada(); if (g && g.modo === 'simulado') esquecerSessao(); } inicio(); break;
       case 'rapida': iniciar('pratica', 'Rodada rápida', embaralhar(Q.map(q => q.id)).slice(0, 10)); rolar(); break;
       case 'erros': iniciar('pratica', 'Refazer erros', paraRefazer()); rolar(); break;
       case 'tema': {
@@ -1836,10 +1863,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         break;
       }
       case 'sair': {
-        if (S.modo === 'simulado' && !S.entregue && Object.keys(S.resp).length) {
-          confirmar = { msg: 'Sair sem entregar? As respostas deste simulado não serão salvas.', sim: 'inicio', rotuloSim: 'Sair' };
-          barraNav();
-        } else if ((S.modo === 'simulado' && S.entregue) || S.modo === 'pratica-fim') { resultado(); }
+        if ((S.modo === 'simulado' && S.entregue) || S.modo === 'pratica-fim') { resultado(); }
         else { inicio(); rolar(); }
         break;
       }
@@ -1904,7 +1928,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
       case 'banca': { const pid = el.dataset.p, so = el.dataset.so || null, ids = idsBanca(pid, so); if (ids.length) { iniciar('pratica', PROVAS[pid].titulo + (so ? ' · ' + so : ''), ids); rolar(); } break; }
       case 'refazer-uma': iniciar('pratica', 'Refazer uma questão', [el.dataset.id]); rolar(); break;
       case 'retomar': { const g = sessaoGuardada(); if (g) { S = g; R = null; F = null; questao(); rolar(); } else inicio(); break; }
-      case 'descartar-sessao': esquecerSessao(); inicio(); break;
+      case 'descartar-sessao': { const g = sessaoGuardada(); if (g && g.modo === 'simulado') esquecerSimulado(); esquecerSessao(); inicio(); break; }
       case 'baixar-progresso': baixarProgresso(); break;
       case 'outra-materia': { const alvo = document.getElementById('t-temas'); if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'start' }); break; }
       case 'ir-materia': { const alvo = document.getElementById(el.dataset.alvo); if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'start' }); break; }
