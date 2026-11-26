@@ -1,5 +1,5 @@
 // Guarda o site no aparelho para abrir sem internet. O montar.py grava uma versão nova a cada montagem, e a versão nova substitui a antiga.
-const VERSAO = '40a210cb4d';
+const VERSAO = '0b1d995947';
 const CACHE = 'hcpa-' + VERSAO;
 const EXTRA = 'hcpa-extra';
 const BASICO = ['./', './index.html', './manifest.webmanifest', './icone-180.png', './icone-192.png', './icone-512.png'];
