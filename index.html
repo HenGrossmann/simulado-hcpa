@@ -168,6 +168,12 @@ details.texto p { margin-top: 10px; white-space: pre-line; font-size: 0.95rem; c
 .dica-q > summary::-webkit-details-marker { display: none; }
 .dica-q > summary::before { content: '?'; display: grid; place-items: center; width: 1.4em; height: 1.4em; border-radius: 50%; background: var(--pen); color: var(--sobre-fill); font-size: 0.85em; font-weight: 800; }
 .dica-q p { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--pen-soft); font-weight: 600; }
+.escada { margin-top: 10px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.escada [hidden] { display: none !important; }
+.escada .folha-rascunho { align-self: stretch; }
+.escada .mini { flex: 0 0 auto; padding: 0 16px; }
+.dica-q .escada .nota, .dica-q .escada .escada-fim { margin: 0; padding: 0; background: none; }
+.dica-q .escada .escada-fim { color: var(--pen); font-weight: 700; }
 .rascunho > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--pen); }
 .rascunho[open] > summary { margin-bottom: 8px; }
 .rascunho > summary::-webkit-details-marker { display: none; }
@@ -1452,6 +1458,25 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
     }).join('')}</div>`;
   }
   // A resolução abre sozinha quando ela erra; quando acerta, fica guardada atrás do botão.
+  // Escada de ajuda no lógico: depois da dica, a resolução abre um passo por vez. O último passo fica para depois da resposta,
+  // e a escada para antes de um passo que cite uma alternativa, para não entregar a letra.
+  const CITA_ALTERNATIVA = /(^|[^\wÀ-ú])[B-E]([^\wÀ-ú]|$)|\(A\)|\b(?:[Ll]etra|[Aa]lternativa|[Cc]orta) A\b/;
+  function escadaDe(q) {
+    if (q.materia !== 'Raciocínio Lógico' || !q.dica || !q.passos || q.passos.length < 2) return [];
+    const degraus = [];
+    for (const p of q.passos.slice(0, -1)) { if (CITA_ALTERNATIVA.test(p.t)) break; degraus.push(p); }
+    return degraus;
+  }
+  function escadaHTML(q, id) {
+    const degraus = escadaDe(q), n = Math.min((S.degraus || {})[id] || 0, degraus.length), fim = n >= degraus.length;
+    if (!degraus.length) return '';
+    return `<div class="escada">
+      <p class="nota">Travou depois da dica? Abra um passo, tente fazer no rascunho e só então abra o próximo.</p>
+      <div class="folha-rascunho"${n ? '' : ' hidden'}><ol class="fb-passos">${degraus.map((p, i) => `<li${i < n ? '' : ' hidden'}><span>${esc(p.t)}</span>${p.grade ? gradeHTML(p.grade) : ''}${p.conta ? contaDoCaderno(p.conta) : ''}</li>`).join('')}</ol></div>
+      <button class="mini" data-act="proximo-passo"${fim ? ' hidden' : ''}>${n ? 'Mostrar o próximo passo' : 'Mostrar o 1º passo'}</button>
+      <p class="escada-fim"${fim ? '' : ' hidden'}>Agora termine sem ajuda. O último passo aparece depois que você responder.</p>
+    </div>`;
+  }
   function explicacaoEmPassos(q, ok) {
     return `${q.regra ? `<p class="fb-regra"><b>Regra:</b> ${esc(q.regra)}</p>` : ''}
       <details class="rascunho"${ok ? '' : ' open'}><summary>${q.passos.some(p => p.conta || p.grade) ? 'Como fazer no rascunho' : 'Ver passo a passo'}</summary>
@@ -2184,7 +2209,7 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
         })()}
         ${q.figura ? `<img class="figura-q" src="${esc(q.figura)}" alt="${esc(q.figuraAlt || `Figura da questão ${q.num}, como está na prova`)}">` : ''}
         ${q.tabela ? `<table class="tabela tabela-q"><thead><tr>${q.tabela.cab.map((c, i) => `<th${i ? ' class="n"' : ''}>${esc(c)}</th>`).join('')}</tr></thead><tbody>${q.tabela.linhas.map(l => `<tr>${l.map((c, i) => `<td${i ? ' class="n"' : ''}>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>` : ''}
-        ${q.dica && !revelado && S.modo !== 'simulado' ? `<details class="dica-q"><summary>Não sei por onde começar</summary><p>${esc(q.dica)}</p></details>` : ''}
+        ${q.dica && !revelado && S.modo !== 'simulado' ? `<details class="dica-q"${(S.dicaUsada || {})[id] ? ' open' : ''}><summary>Não sei por onde começar</summary><p>${esc(q.dica)}</p>${escadaHTML(q, id)}</details>` : ''}
         ${!revelado && S.modo !== 'simulado' ? lembretesDe(q).map(([, nome, txt]) => `<details class="dica-q"><summary>Não lembro o que é ${esc(nome)}</summary><p>${esc(txt)}</p></details>`).join('') : ''}
         ${q.banca && q.textoRef && !revelado && S.modo !== 'simulado' ? `<details class="dica-q"><summary>O texto é longo demais</summary><p>Leia primeiro a pergunta e as alternativas. Depois volte ao texto só nas linhas que elas citam. Não precisa ler tudo de novo a cada questão do mesmo texto.</p></details>` : ''}
         <div class="opcoes">${opcoes}</div>
@@ -2421,6 +2446,15 @@ details.material.pesos > div { display: flex; flex-direction: column; gap: 10px;
       case 'outra-parecida': {
         const atual = BYID[S.ids[S.i]], nova = novaParecida(atual);
         if (nova) { nova.parecidaDe = atual.parecidaDe; const [nid] = entraNaSessao([nova]); S.ids.splice(S.i + 1, 0, nid); S.i++; questao(); rolar(); }
+        break;
+      }
+      case 'proximo-passo': {
+        const box = el.closest('.escada'), prox = box.querySelector('li[hidden]');
+        if (prox) prox.hidden = false;
+        box.querySelector('.folha-rascunho').hidden = false;
+        S.degraus = S.degraus || {}; S.degraus[S.ids[S.i]] = box.querySelectorAll('li:not([hidden])').length; guardarSessao();
+        if (box.querySelector('li[hidden]')) el.textContent = 'Mostrar o próximo passo';
+        else { el.hidden = true; box.querySelector('.escada-fim').hidden = false; }
         break;
       }
       case 'parecida-agora': {
